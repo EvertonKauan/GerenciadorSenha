@@ -4,58 +4,98 @@ conexao = pymysql.connect(host='localhost',port=3308,database='gerenciador_senha
                           user='root',password='root',autocommit=True)
 #cursor
 cursor = conexao.cursor()
-
+print('-' + '==-' * 8)
+print('  GERENCIADOR DE SENHAS')
 desejo = 'n'
+
+
 while True:
-    print("NOVA SENHA [1] VISUALIZAR PLATAFORMAS JÁ CADASTRADAS [2]")
+    print('-' + '==-' * 8)
+    menu = '''      MENU INICIAL
+-==-==-==-==-==-==-==-==-
+[1] Adicionar nova senha
+[2] Acessar senhas
+[3] Deletar senha
+[4] Sair'''
+    print(menu) #Exibição de opções
+    print('-' + '==-' * 8)
+    print()
     c = 0
 
-    escolha = int(input("O QUE VOCÊ DESEJA FAZER? "))
+    escolha = int(input("O que você deseja fazer? "))
     while True:
-        if escolha == 1 or escolha == 2:
+        if escolha == 1 or escolha == 2 or escolha == 3 or escolha == 4:
             break
         #Caso o usuário tente fugir das possibilidades
-        escolha = int(input("Digite uma das alternativas mencionadas([1] [2]): "))
-    print()
+            escolha = int(input("Digite uma opção válida: "))
+        print()
 
     #Dentro de um bloco Try, para tratar os erros
     try:
-        #CRIAR NOVA SENHA evertonkauan
+        #CRIAR NOVA SENHA
         if escolha == 1:
-            descricao = str(input("Digite a rede social: "))
+            descricao = str(input("Digite o nome da plataforma: ").upper())
             password_user = str(input("Digite a senha: "))
             comando = ("INSERT INTO table_user (description, password) values (%s, %s)") #INSERIR NA TABELA A PLATAFORMA E SUA SENHA
             val = (descricao, password_user) #criada tupla, para inserir dados na coluna
             cursor.execute(comando,val) #execução
+            print('\nSeu novo cadastro obteve sucesso.\n') #Confirmação de cadastro
 
-        #VISUALIZAR SENHAS JÁ CADASTRADAS
-        if escolha ==2:
-            consulta = ("select * from table_user") #selecionar a tabela, para poder visualiza-la
+        #VISUALIZAR OU EXCLUIR SENHAS JÁ CADASTRADAS
+        if escolha ==2 or escolha == 3:
+            consulta = ("select * from table_user")  # selecionar a tabela, para poder visualiza-la
             cursor.execute(consulta)
-            linhas = cursor.fetchall() #contar quantas linhas existem nas colunas
-            print("Número total de plataformas cadastradas:", cursor.rowcount)
-            for linha in linhas:
-                print("Plataforma:", linha[0])
-                print("ID:", linha[2], "\n")
+            linhas = cursor.fetchall()  # contar quantas linhas existem nas colunas
+            contador_linhas = 0
+            for quantidade_linhas in linhas:
+                contador_linhas += 1
+            if contador_linhas < 1: #Se for menor que 1, é porque não possui nenhum registro no banco de dados
+                print()
+                print("Você ainda não possui senhas! Volte ao menu para cadastrar!") #CASO NÃO TENHA SENHAS ELE NÃO CONTINUA
+                print()
+            else:
+                print("PLATAFORMAS DISPONÍVEIS:\n") #Exibição das possibilidades
+                for linha in linhas:
+                    print(f"[{linha[2]}]", linha[0])
+                print()
+                consulta = ("select * from table_user")
+                cursor.execute(consulta)
+                linhas = cursor.fetchall()
+                if escolha == 2:
+                    plataforma_desejada = int(input("Qual você quer acessar? "))
+                    for linha2 in linhas:
+                        if plataforma_desejada == linha2[2]: #Comparando, para quando o valor varrido for o desejado pelo usuário, exibir após o if
+                            print()
+                            print("Plataforma:", linha2[0])
+                            print("Senha:", linha2[1])
+                            print()
+                else:
+                    plataforma_desejada = int(input("Qual você quer deletar? "))
+                    confirmacao = str(input("Realmente deseja deletar o registro? A ação será permanente: [s/n] "))
+                    confirmacao = confirmacao.lower()
+                    if confirmacao == "s":
+                        for linha2 in linhas:
+                            if plataforma_desejada == linha2[2]: #Comparando, para quando o valor varrido for o desejado pelo usuário
+                                excluir = ('DELETE FROM table_user where id_description = (%s)')
+                                valor_excluir = linha2[2]
+                                cursor.execute(excluir, valor_excluir)
+                                print('\nDeletado com sucesso!\n')
 
-            consulta = ("select * from table_user")
-            cursor.execute(consulta)
-            linhas = cursor.fetchall()
-            plataforma_desejada = int(input("Digite qual ID você quer visualizar: "))
-            for linha2 in linhas:
-                if plataforma_desejada == linha2[2]: #Comparando, para quando o valor varrido for o desejado pelo usuário, exibir após o if
-                    print()
-                    print("Plataforma escolhida foi", linha2[0])
-                    print("Senha:", linha2[1])
-                    print()
+                                for quantidade_linhas in linhas:
+                                    contador_linhas +=1
+                                if contador_linhas > 1:
+                                    resetar_id = ('ALTER TABLE table_user AUTO_INCREMENT = 1') #Resetar o ID, quando não houver mais senhas
+                                    cursor.execute(resetar_id)
+        elif escolha == 4:
+            print('Até breve!') #Encerrar programa
+            break
 
     except Exception as e:
         print(f"Erro: {e}")
-
-    desejo = str(input("Deseja voltar ao menu? [s/n] "))
-    desejo = desejo.lower()
+    desejo = str(input("Deseja voltar ao menu inicial? [s/n] ").lower())
+    print()
 
     if desejo == "n":
-        print("Programa encerrado.")
+        print("Até breve!") #Encerrar programa
         conexao.close() #fechar conexão
         break
