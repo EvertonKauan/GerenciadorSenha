@@ -5,7 +5,7 @@ conexao = pymysql.connect(host='localhost',port=3308,database='gerenciador_senha
 #cursor
 cursor = conexao.cursor()
 print('-' + '==-' * 8)
-print('  GERENCIADOR DE SENHAS')
+print('  \033[1mGERENCIADOR DE SENHAS')
 desejo = 'n'
 
 
@@ -17,9 +17,9 @@ while True:
 [2] Acessar senhas
 [3] Deletar senha
 [4] Sair'''
-    print(menu) #Exibição de opções
+    print(f'\033[1m{menu}') #Exibição de opções
     print('-' + '==-' * 8)
-    print()
+    print('\033[;1m')
     c = 0
 
     escolha = int(input("O que você deseja fazer? "))
@@ -39,7 +39,7 @@ while True:
             comando = ("INSERT INTO table_user (description, password) values (%s, %s)") #INSERIR NA TABELA A PLATAFORMA E SUA SENHA
             val = (descricao, password_user) #criada tupla, para inserir dados na coluna
             cursor.execute(comando,val) #execução
-            print('\nSeu novo cadastro obteve sucesso.\n') #Confirmação de cadastro
+            print('\n\033[;32mSeu novo cadastro obteve sucesso.\033[;1m\n') #Confirmação de cadastro
 
         #VISUALIZAR OU EXCLUIR SENHAS JÁ CADASTRADAS
         if escolha ==2 or escolha == 3:
@@ -51,10 +51,10 @@ while True:
                 contador_linhas += 1
             if contador_linhas < 1: #Se for menor que 1, é porque não possui nenhum registro no banco de dados
                 print()
-                print("Você ainda não possui senhas! Volte ao menu para cadastrar!") #CASO NÃO TENHA SENHAS ELE NÃO CONTINUA
+                print("\033[;31mVocê ainda não possui senhas! Volte ao menu para cadastrar!\033[;1m") #CASO NÃO TENHA SENHAS ELE NÃO CONTINUA
                 print()
             else:
-                print("PLATAFORMAS DISPONÍVEIS:\n") #Exibição das possibilidades
+                print("\nPLATAFORMAS DISPONÍVEIS:\n") #Exibição das possibilidades
                 for linha in linhas:
                     print(f"[{linha[2]}]", linha[0])
                 print()
@@ -71,7 +71,7 @@ while True:
                             print()
                 else:
                     plataforma_desejada = int(input("Qual você quer deletar? "))
-                    confirmacao = str(input("Realmente deseja deletar o registro? A ação será permanente: [s/n] "))
+                    confirmacao = str(input("\033[;31mRealmente deseja deletar o registro? A ação será permanente: [s/n] \033[;1m"))
                     confirmacao = confirmacao.lower()
                     if confirmacao == "s":
                         for linha2 in linhas:
@@ -79,7 +79,7 @@ while True:
                                 excluir = ('DELETE FROM table_user where id_description = (%s)')
                                 valor_excluir = linha2[2]
                                 cursor.execute(excluir, valor_excluir)
-                                print('\nDeletado com sucesso!\n')
+                                print('\n\033[;32mDeletado com sucesso!\033[;1m\n')
 
                                 for quantidade_linhas in linhas:
                                     contador_linhas +=1
@@ -87,7 +87,7 @@ while True:
                                     resetar_id = ('ALTER TABLE table_user AUTO_INCREMENT = 1') #Resetar o ID, quando não houver mais senhas
                                     cursor.execute(resetar_id)
         elif escolha == 4:
-            print('Até breve!') #Encerrar programa
+            print('\n\033[;32mAté breve!') #Encerrar programa
             break
 
     except Exception as e:
@@ -96,6 +96,6 @@ while True:
     print()
 
     if desejo == "n":
-        print("Até breve!") #Encerrar programa
+        print("\033[;32mAté breve!") #Encerrar programa
         conexao.close() #fechar conexão
         break
