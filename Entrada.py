@@ -1,4 +1,7 @@
 import pymysql
+
+import GerenciadorDeSenhas.Back
+from Back import *
 #Criar conexão
 conexao = pymysql.connect(host='localhost',port=3308,database='gerenciador_senhas',
                           user='root',password='root',autocommit=True)
@@ -7,7 +10,6 @@ cursor = conexao.cursor()
 print('-' + '==-' * 8)
 print('  \033[1mGERENCIADOR DE SENHAS')
 desejo = 'n'
-
 
 while True:
     print('-' + '==-' * 8)
@@ -36,26 +38,19 @@ while True:
         if escolha == 1:
             descricao = str(input("Digite o nome da plataforma: ").upper())
             password_user = str(input("Digite a senha: "))
-            comando = ("INSERT INTO table_user (description, password) values (%s, %s)") #INSERIR NA TABELA A PLATAFORMA E SUA SENHA
-            val = (descricao, password_user) #criada tupla, para inserir dados na coluna
-            cursor.execute(comando,val) #execução
+            criar_senha(descricao, password_user)
             print('\n\033[;32mSeu novo cadastro obteve sucesso.\033[;1m\n') #Confirmação de cadastro
 
         #VISUALIZAR OU EXCLUIR SENHAS JÁ CADASTRADAS
         if escolha ==2 or escolha == 3:
-            consulta = ("select * from table_user")  # selecionar a tabela, para poder visualiza-la
-            cursor.execute(consulta)
-            linhas = cursor.fetchall()  # contar quantas linhas existem nas colunas
-            contador_linhas = 0
-            for quantidade_linhas in linhas:
-                contador_linhas += 1
-            if contador_linhas < 1: #Se for menor que 1, é porque não possui nenhum registro no banco de dados
+            select()
+            if quantidade() < 1: #Se for menor que 1, é porque não possui nenhum registro no banco de dados
                 print()
                 print("\033[;31mVocê ainda não possui senhas! Volte ao menu para cadastrar!\033[;1m") #CASO NÃO TENHA SENHAS ELE NÃO CONTINUA
                 print()
             else:
                 print("\nPLATAFORMAS DISPONÍVEIS:\n") #Exibição das possibilidades
-                for linha in linhas:
+                for linha in select():
                     print(f"[{linha[2]}]", linha[0])
                 print()
                 consulta = ("select * from table_user")
@@ -63,7 +58,7 @@ while True:
                 linhas = cursor.fetchall()
                 if escolha == 2:
                     plataforma_desejada = int(input("Qual você quer acessar? "))
-                    for linha2 in linhas:
+                    for linha2 in select():
                         if plataforma_desejada == linha2[2]: #Comparando, para quando o valor varrido for o desejado pelo usuário, exibir após o if
                             print()
                             print("Plataforma:", linha2[0])
@@ -71,21 +66,13 @@ while True:
                             print()
                 else:
                     plataforma_desejada = int(input("Qual você quer deletar? "))
-                    confirmacao = str(input("\033[;31mRealmente deseja deletar o registro? A ação será permanente: [s/n] \033[;1m"))
-                    confirmacao = confirmacao.lower()
+                    confirmacao = str(input("\033[;31mRealmente deseja deletar o registro? A ação será permanente: [s/n] \033[;1m").lower())
                     if confirmacao == "s":
-                        for linha2 in linhas:
+                        for linha2 in select():
                             if plataforma_desejada == linha2[2]: #Comparando, para quando o valor varrido for o desejado pelo usuário
-                                excluir = ('DELETE FROM table_user where id_description = (%s)')
-                                valor_excluir = linha2[2]
-                                cursor.execute(excluir, valor_excluir)
+                                deletar(linha2, linhas, plataforma_desejada)
                                 print('\n\033[;32mDeletado com sucesso!\033[;1m\n')
-
-                                for quantidade_linhas in linhas:
-                                    contador_linhas +=1
-                                if contador_linhas > 1:
-                                    resetar_id = ('ALTER TABLE table_user AUTO_INCREMENT = 1') #Resetar o ID, quando não houver mais senhas
-                                    cursor.execute(resetar_id)
+                                reset()
         elif escolha == 4:
             print('\n\033[;32mAté breve!') #Encerrar programa
             break
