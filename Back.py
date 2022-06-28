@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 #Criar conexão
 conexao = pymysql.connect(host='localhost',port=3308,database='gerenciador_senhas',
                           user='root',password='root',autocommit=True)
-#cursor
+#cursor1
 cursor = conexao.cursor()
 
 def criar_plataforma(descricao, login_user, password_user):
@@ -19,7 +19,7 @@ def criar_plataforma(descricao, login_user, password_user):
 def select():
     consulta = ("select * from table_user")  # selecionar a tabela, para poder visualiza-la
     cursor.execute(consulta)
-    linhas = cursor.fetchall()  # contar quantas linhas existem nas colunas
+    linhas = cursor.fetchall()  #contar quantas linhas existem nas colunas
     return linhas
 
 def quantidade():
@@ -39,4 +39,3 @@ def reset():
     if quantidade() >= 0:
         resetar_id = ('ALTER TABLE table_user AUTO_INCREMENT = 1')  # Resetar o ID, quando não houver mais senhas
         cursor.execute(resetar_id)
-
