@@ -1,7 +1,9 @@
 import pymysql
-
 import GerenciadorDeSenhas.Back
 from Back import *
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
 #Criar conexão
 conexao = pymysql.connect(host='localhost',port=3308,database='gerenciador_senhas',
                           user='root',password='root',autocommit=True)
@@ -10,6 +12,7 @@ cursor = conexao.cursor()
 print('-' + '==-' * 8)
 print('  \033[1mGERENCIADOR DE SENHAS')
 desejo = 'n'
+
 
 while True:
     print('-' + '==-' * 8)
@@ -37,8 +40,10 @@ while True:
         #CRIAR NOVA SENHA
         if escolha == 1:
             descricao = str(input("Digite o nome da plataforma: ").upper())
+            login_user = str(input("Digite o login da plataforma: "))
             password_user = str(input("Digite a senha: "))
-            criar_senha(descricao, password_user)
+
+            criar_plataforma(descricao, login_user, password_user)
             print('\n\033[;32mSeu novo cadastro obteve sucesso.\033[;1m\n') #Confirmação de cadastro
 
         #VISUALIZAR OU EXCLUIR SENHAS JÁ CADASTRADAS
@@ -51,7 +56,7 @@ while True:
             else:
                 print("\nPLATAFORMAS DISPONÍVEIS:\n") #Exibição das possibilidades
                 for linha in select():
-                    print(f"[{linha[2]}]", linha[0])
+                    print(f"[{linha[3]}]", linha[0])
                 print()
                 consulta = ("select * from table_user")
                 cursor.execute(consulta)
@@ -59,17 +64,34 @@ while True:
                 if escolha == 2:
                     plataforma_desejada = int(input("Qual você quer acessar? "))
                     for linha2 in select():
-                        if plataforma_desejada == linha2[2]: #Comparando, para quando o valor varrido for o desejado pelo usuário, exibir após o if
+                        if plataforma_desejada == linha2[3]: #Comparando, para quando o valor varrido for o desejado pelo usuário, exibir após o if
                             print()
                             print("Plataforma:", linha2[0])
-                            print("Senha:", linha2[1])
+                            print("Login:", linha2[1])
+                            print("Senha: *******")
+                            #2print("Senha:", linha2[1])
                             print()
+                            deseja_acessar = input('Deseja acessar automaticamente à plataforma? [s/n] ').lower()
+                            if deseja_acessar == 's':
+                                driver = webdriver.Chrome(executable_path=r"C:\Users\Everton Pessoal\chromedriver\chromedriver")
+                                driver.get(f'https://www.{linha2[0]}.com.br')
+                                driver.find_element(By.XPATH,'//*[@id="details-button"]').click()
+                                driver.find_element(By.XPATH,'//*[@id="proceed-link"]').click()
+                                campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
+                                campo_login.send_keys(linha2[1])
+
+                                campo_password = driver.find_element(By.CSS_SELECTOR, '#pass')
+                                campo_password.send_keys(linha2[2])
+
+                                #driver.find_element(By.XPATH,'//*[@id="u_0_5_Ch"]').click()
+                            else:
+                                pass
                 else:
                     plataforma_desejada = int(input("Qual você quer deletar? "))
                     confirmacao = str(input("\033[;31mRealmente deseja deletar o registro? A ação será permanente: [s/n] \033[;1m").lower())
                     if confirmacao == "s":
                         for linha2 in select():
-                            if plataforma_desejada == linha2[2]: #Comparando, para quando o valor varrido for o desejado pelo usuário
+                            if plataforma_desejada == linha2[3]: #Comparando, para quando o valor varrido for o desejado pelo usuário
                                 deletar(linha2, linhas, plataforma_desejada)
                                 print('\n\033[;32mDeletado com sucesso!\033[;1m\n')
                                 reset()
