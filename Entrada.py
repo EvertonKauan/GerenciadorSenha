@@ -65,21 +65,111 @@ while True:
                         deseja_acessar = input('Deseja acessar automaticamente à plataforma? [s/n] ').lower()
                         if deseja_acessar == 's': #automação
                             driver = webdriver.Chrome(executable_path=r"C:\Users\Everton Pessoal\chromedriver\chromedriver")
-                            try:
-                                driver.get(f'https://www.{linha2[0]}.com.br')
-                                campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
-                                campo_login.send_keys(linha2[1])
+                            if linha2[0] == "FACEBOOK":
+                                try:
+                                    driver.get(f'https://www.facebook.com.br')
+                                    campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
+                                    campo_login.send_keys(linha2[1])
 
-                                campo_password = driver.find_element(By.CSS_SELECTOR, '#pass')
-                                campo_password.send_keys(linha2[2] + Keys.RETURN)
-                            except:
-                                driver.find_element(By.XPATH,'//*[@id="details-button"]').click()
-                                driver.find_element(By.XPATH,'//*[@id="proceed-link"]').click()
-                                driver.get(f'https://www.{linha2[0]}.com.br')
-                                campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
-                                campo_login.send_keys(linha2[1])
-                                campo_password = driver.find_element(By.CSS_SELECTOR, '#pass')
-                                campo_password.send_keys(linha2[2] + Keys.RETURN)
+                                    campo_password = driver.find_element(By.CSS_SELECTOR, '#pass')
+                                    campo_password.send_keys(linha2[2] + Keys.RETURN)
+                                except:
+                                    driver.find_element(By.XPATH,'//*[@id="details-button"]').click()
+                                    driver.find_element(By.XPATH,'//*[@id="proceed-link"]').click()
+                                    driver.get(f'https://www.{linha2[0]}.com.br')
+                                    campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
+                                    campo_login.send_keys(linha2[1])
+                                    campo_password = driver.find_element(By.CSS_SELECTOR, '#pass')
+                                    campo_password.send_keys(linha2[2] + Keys.RETURN)
+
+                            if linha2[0] == "LINKEDIN":
+                                try:
+                                    driver.get('https://br.linkedin.com/')
+                                    campo_login = driver.find_element(By.CSS_SELECTOR, "#session_key")
+                                    campo_login.send_keys(linha2[1])
+
+                                    campo_password = driver.find_element(By.CSS_SELECTOR, '#session_password')
+                                    campo_password.send_keys(linha2[2] + Keys.RETURN)
+
+                                except:
+                                    driver.find_element(By.XPATH, '//*[@id="details-button"]').click()
+                                    driver.find_element(By.XPATH, '//*[@id="proceed-link"]').click()
+
+                                    driver.get('https://br.linkedin.com/')
+                                    campo_login = driver.find_element(By.CSS_SELECTOR, "#session_key")
+                                    campo_login.send_keys(linha2[1])
+                                    campo_password = driver.find_element(By.CSS_SELECTOR, '#session_password')
+                                    campo_password.send_keys(linha2[2] + Keys.RETURN)
+
+                            if linha2[0] == "PINTEREST":
+                                    try:
+                                        driver.get('https://br.pinterest.com/login/')
+                                        campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
+                                        campo_login.send_keys(linha2[1])
+
+                                        campo_password = driver.find_element(By.CSS_SELECTOR, '#password')
+                                        campo_password.send_keys(linha2[2] + Keys.RETURN)
+
+                                    except:
+                                        driver.find_element(By.XPATH, '//*[@id="details-button"]').click()
+                                        driver.find_element(By.XPATH, '//*[@id="proceed-link"]').click()
+
+                                        driver.get('https://br.pinterest.com/login/')
+                                        campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
+                                        campo_login.send_keys(linha2[1])
+                                        campo_password = driver.find_element(By.CSS_SELECTOR, '#password')
+                                        campo_password.send_keys(linha2[2] + Keys.RETURN)
+
+                            '''if linha2[0] == "TWITCH":
+                                    driver.get('https://www.twitch.tv/')
+                                    driver.find_element(By.XPATH, '//*[@id="root"]/div/div[2]/nav/div/div[3]/div[3]/div/div[1]/div[1]/button/div/div').click()
+
+                                    campo_login = driver.find_element(By.CSS_SELECTOR, "#login-username")
+                                    campo_login.send_keys(linha2[1])
+
+                                    campo_password = driver.find_element(By.CSS_SELECTOR, '#password-input')
+                                    campo_password.send_keys(linha2[2] + Keys.RETURN)'''
+
+                            if linha2[0] == "SUAP":
+                                try:
+                                    driver.get('https://suap.ifpb.edu.br/accounts/login/?next=/')
+                                    campo_login = driver.find_element(By.CSS_SELECTOR, "#id_username")
+                                    campo_login.send_keys(linha2[1])
+
+                                    campo_password = driver.find_element(By.CSS_SELECTOR, '#id_password')
+                                    campo_password.send_keys(linha2[2] + Keys.RETURN)
+
+                                except:
+                                    driver.find_element(By.XPATH, '//*[@id="details-button"]').click()
+                                    driver.find_element(By.XPATH, '//*[@id="proceed-link"]').click()
+
+                                    driver.get('https://suap.ifpb.edu.br/accounts/login/?next=/')
+                                    campo_login = driver.find_element(By.CSS_SELECTOR, "#id_username")
+                                    campo_login.send_keys(linha2[1])
+
+                                    campo_password = driver.find_element(By.CSS_SELECTOR, '#id_password')
+                                    campo_password.send_keys(linha2[2] + Keys.RETURN)
+
+                            if linha2[0] == "MESSENGER":
+                                    try:
+                                        driver.get('https://www.messenger.com/')
+                                        campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
+                                        campo_login.send_keys(linha2[1])
+
+                                        campo_password = driver.find_element(By.CSS_SELECTOR, '#pass')
+                                        campo_password.send_keys(linha2[2] + Keys.RETURN)
+
+                                    except:
+                                        driver.find_element(By.XPATH, '//*[@id="details-button"]').click()
+                                        driver.find_element(By.XPATH, '//*[@id="proceed-link"]').click()
+
+                                        driver.get('https://www.messenger.com/')
+                                        campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
+                                        campo_login.send_keys(linha2[1])
+
+                                        campo_password = driver.find_element(By.CSS_SELECTOR, '#pass')
+                                        campo_password.send_keys(linha2[2] + Keys.RETURN)
+
                         else:
                             pass
             else:
