@@ -1,4 +1,4 @@
-# Gerenciador_de_senhas
+# Gerenciador de senhas
 
 ---
 
