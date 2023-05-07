@@ -30,5 +30,5 @@
  
  # Autores
  
- <p> Esse projeto foi elaborado por Jennifer Medeiros e Everton Kauan.
+ <p> Esse projeto foi elaborado por Everton Kauan e Jennifer Medeiros.
  
